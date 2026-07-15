@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = [
-    'agridaya-kei4.vercel.app', 
+    '.vercel.app', 
     'localhost', 
     '127.0.0.1'
 ]
