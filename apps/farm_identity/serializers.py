@@ -62,4 +62,3 @@ class CultivationLogSerializer(serializers.ModelSerializer):
             "catatan_lapangan",
             "dokumentasi"
         ]
-        read_only_fields = ["id", "farm_identity"]

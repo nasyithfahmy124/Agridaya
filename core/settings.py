@@ -22,10 +22,10 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#9d-t8g($c0d_25s(*yv^qa0=5uy53d02&kh_eija(ik+t4f)!'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -148,7 +148,7 @@ USE_TZ = True
 #gambar
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-SUPABASE_BUCKET_NAME = "agridaya-bucket" 
+SUPABASE_BUCKET_NAME = "agridaya" 
 
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'  
@@ -157,7 +157,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 STORAGES = {
     "default": {
-        "BACKEND": "backend.custom_storage.SupabaseStorage",
+        "BACKEND": "core.custom_storage.SupabaseStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",

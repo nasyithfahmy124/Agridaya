@@ -85,7 +85,7 @@ class CultivationLog(models.Model):
         on_delete=models.CASCADE, 
         related_name="logs"
     )
-    tanggal = models.DateTimeField(
+    tanggal = models.DateField(
         help_text="Tanggal dan waktu aktivitas dilakukan."
     )
     aktivitas = models.CharField(
@@ -112,4 +112,4 @@ class CultivationLog(models.Model):
         verbose_name_plural = "Log Budidaya"
 
     def __str__(self):
-        return f"{self.aktivitas} - {self.tanggal.strftime('%Y-%m-%d')}"
+        return f"{self.aktivitas}"

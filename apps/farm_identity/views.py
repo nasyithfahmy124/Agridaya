@@ -78,18 +78,17 @@ class FarmIdentityView(generics.GenericAPIView):
         )
         
 
-# ==================== LOG BUDIDAYA ====================
 class CultivationLogListView(generics.ListCreateAPIView):
     serializer_class = CultivationLogSerializer
-    # Pastikan user harus login terlebih dahulu agar request.user tidak bernilai AnonymousUser
     permission_classes = [IsAuthenticated] 
 
     def get_queryset(self):
-        # Opsional: Hanya tampilkan log budidaya milik user yang sedang aktif login
         if self.request.user.is_authenticated:
             try:
-                user_farm = self.request.user.farmer_profile.farm_identity
-                return CultivationLog.objects.filter(farm_identity=user_farm)
+                user_profile = self.request.user.farmer
+                user_farm = FarmIdentity.objects.filter(farmer=user_profile).first()
+                if user_farm:
+                    return CultivationLog.objects.filter(farm_identity=user_farm)
             except AttributeError:
                 return CultivationLog.objects.none()
         return CultivationLog.objects.all()
@@ -102,8 +101,6 @@ class CultivationLogListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
-        # Di sini method perform_create dipanggil oleh Django REST Framework
         self.perform_create(serializer)
         
         return Response(
@@ -114,12 +111,19 @@ class CultivationLogListView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
-    # 💡 TARUH METHOD INI DI SINI 💡
     def perform_create(self, serializer):
-        # Ambil profil dari user yang sedang login secara otomatis
-        user_profile = self.request.user.farmer_profile
-        # Ambil lahan milik user tersebut
-        user_farm = user_profile.farm_identity
-        
-        # Simpan log budidaya langsung dikaitkan ke lahan milik user tersebut
+        user = self.request.user
+        user_profile, created = FarmerProfile.objects.get_or_create(
+            user=user,
+            defaults={"nama_petani": user.username.capitalize()}
+        )
+        user_farm, created_farm = FarmIdentity.objects.get_or_create(
+            farmer=user_profile, # Disesuaikan menjadi 'farmer' bukan 'farmer_profile'
+            defaults={
+                "nama_lahan": "Lahan Utama " + user_profile.nama_petani,
+                "luas_lahan": "1.00",
+                "tipe_tanah": "Tanah Lempung",
+                "lokasi_daerah": "Indonesia"
+            }
+        )
         serializer.save(farm_identity=user_farm)
