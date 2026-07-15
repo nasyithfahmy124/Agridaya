@@ -43,14 +43,11 @@ class MusimTanam(models.Model):
     def __str__(self):
         return f"{self.nama_musim} ({self.lahan.nama_lahan})"
     
-class RiwayatChat(models.Model):
-    ques = models.CharField(max_length=1000)
-    answ = models.TextField()
-    tgl = models.DateTimeField(auto_now_add=True)
-
 #dashboard prediksi
 class PrediksiInput(models.Model):
-    lahan = models.ForeignKey(Lahan, on_delete=models.CASCADE, related_name='aktivitas_set')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lahan = models.CharField(max_length=100)
+    # lahan = models.ForeignKey(Lahan, on_delete=models.CASCADE, related_name='aktivitas_set')
     lokasi_aktivitas = models.CharField(max_length=150, blank=True, null=True)
     komoditas_aktivitas = models.CharField(max_length=100, blank=True, null=True)
     modal = models.DecimalField(max_digits=12, decimal_places=2, help_text="Input modal dalam Rupiah")
@@ -63,40 +60,3 @@ class PrediksiInput(models.Model):
     class Meta:
         ordering = ['-created_at']
         verbose_name_plural = "Aktivitas Tanam"
-#fitur prediksi Panen
-class Lokasi(models.Model):
-    country = models.CharField(max_length=100)
-    provincy = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    
-    def __str__(self):
-        return f"{self.city} , {self.city}"
-    
-class MusimTanam2(models.Model):
-    nama_panen = models.CharField(max_length=100)
-    tanggal_mulai = models.DateField()
-    tanggal_panen = models.DateField()
-    
-    def clean(self):
-        if self.tanggal_mulai and self.tanggal_panen:
-            if self.tanggal_panen < self.tanggal_mulai:
-                raise ValidationError("Tanggal panen tidak boleh lebih awal dari tanggal mulai ")
-            
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-class LuasLahan(models.Model):
-    luas_meter = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        validators=[MinValueValidator(Decimal('0.01'))]
-    )
-    @property
-    def luas_hektar(self):
-        if self.luas_meter:
-            return self.luas_meter / Decimal('10000')
-        return Decimal('0.00')
-    def __str__(self):
-        return f"{self.luas_meter} m² ({self.luas_hektar} Ha)"
-    

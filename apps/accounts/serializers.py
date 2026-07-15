@@ -12,6 +12,5 @@ class RegisterSeri(serializers.ModelSerializer):
             email=validated_data.get('email',''),
             password=validated_data['password']
         )
-        User.objects.create(user=user)
         return user
 

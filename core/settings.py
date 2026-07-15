@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     #apps
     'apps.accounts',
     'apps.marketplace',
-    'apps.prediksi_ai_diagnosis'
+    'apps.prediksi_ai_diagnosis',
+    'apps.pendanaan',
+    'apps.farm_identity',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -143,5 +145,21 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
+#gambar
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_BUCKET_NAME = "agridaya-bucket" 
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'  
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "backend.custom_storage.SupabaseStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}

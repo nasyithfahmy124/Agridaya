@@ -8,4 +8,6 @@ class AktivitasView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return PrediksiInput.objects.filter(lahan__profile__user=self.request.user)
+        return PrediksiInput.objects.filter(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
