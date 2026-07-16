@@ -24,7 +24,8 @@ class AktivitasView(viewsets.ModelViewSet):
 
 
 logger = logging.getLogger(__name__)
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
@@ -36,6 +37,8 @@ class AIDiagnosisViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         global GEMINI_API_KEY
+        
+        # Validasi API key di dalam runtime request
         if not GEMINI_API_KEY:
             GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
             if not GEMINI_API_KEY:
