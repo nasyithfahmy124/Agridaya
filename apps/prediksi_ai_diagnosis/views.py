@@ -25,9 +25,8 @@ class AktivitasView(viewsets.ModelViewSet):
 
 logger = logging.getLogger(__name__)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("Error: Environment variable 'GEMINI_API_KEY' belum di-set!")
-genai.configure(api_key=GEMINI_API_KEY)
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 class AIDiagnosisViewSet(viewsets.ModelViewSet):
     queryset = AIDiagnosis.objects.all()
@@ -36,6 +35,15 @@ class AIDiagnosisViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        global GEMINI_API_KEY
+        if not GEMINI_API_KEY:
+            GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+            if not GEMINI_API_KEY:
+                return Response(
+                    {"error": "Konfigurasi server bermasalah. GEMINI_API_KEY belum di-set di platform hosting."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            genai.configure(api_key=GEMINI_API_KEY)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
