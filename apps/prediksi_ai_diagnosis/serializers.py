@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import PrediksiInput,MusimTanam,Lahan
+from .models import PrediksiInput,MusimTanam,Lahan,AIDiagnosis
 from decimal import Decimal
 from django.utils import timezone
+from rest_framework import serializers
 
 class MusimTanamSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,3 +123,24 @@ class AktivitasTanamSeri(serializers.ModelSerializer):
             f"diperkirakan mencapai {ringkasan['total_prediksi_panen_ton']} ton. Angka ini {ringkasan['persentase_kenaikan']}% "
             f"lebih tinggi dibanding rata-rata wilayah berkat optimalisasi modal yang Anda input."
         )
+
+
+class AIDiagnosisSerializer(serializers.ModelSerializer):
+    # Menyediakan representasi URL absolut untuk gambar
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AIDiagnosis
+        fields = ['id', 'image', 'image_url', 'crop_name', 'diagnosis_result', 'created_at']
+        read_only_fields = ['id', 'diagnosis_result', 'created_at']
+        extra_kwargs = {
+            'image': {'write_only': True}  
+        }
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None

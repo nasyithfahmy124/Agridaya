@@ -60,3 +60,20 @@ class PrediksiInput(models.Model):
     class Meta:
         ordering = ['-created_at']
         verbose_name_plural = "Aktivitas Tanam"
+
+import uuid
+from django.db import models
+
+class AIDiagnosis(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    image = models.ImageField(upload_to='ai_diagnosis/')
+    crop_name = models.CharField(max_length=100, blank=True, null=True)
+    diagnosis_result = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "AI Diagnoses"
+
+    def __str__(self):
+        return f"Diagnosis {self.crop_name or 'Tanaman'} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
