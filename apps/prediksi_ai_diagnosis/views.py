@@ -25,6 +25,8 @@ class AktivitasView(viewsets.ModelViewSet):
 
 logger = logging.getLogger(__name__)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("Error: Environment variable 'GEMINI_API_KEY' belum di-set!")
 genai.configure(api_key=GEMINI_API_KEY)
 
 class AIDiagnosisViewSet(viewsets.ModelViewSet):
