@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -58,6 +58,25 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+
+SIMPLE_JWT = {
+    # Access token berlaku selama 1 hari (ubah ke 15-60 menit nanti pas production)
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), 
+    
+    # Refresh token berlaku selama 7 hari
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    
+    # Memungkinkan rotasi token untuk keamanan ekstra
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY, # Menggunakan secret key Django kamu
+    'AUTH_HEADER_TYPES': ('Bearer',), # FE harus kirim: Bearer <token>
 }
 
 SPECTACULAR_SETTINGS = {
